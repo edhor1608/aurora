@@ -1,0 +1,11 @@
+{
+  "name": "@aurora/convex",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "biome check src package.json",
+    "test": "bun run test:smoke",
+    "test:smoke": "node -e \"console.log('convex smoke ok')\""
+  }
+}

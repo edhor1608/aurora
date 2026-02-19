@@ -1,0 +1,61 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`docs mirror > keeps locked decisions and architecture docs stable 1`] = `
+{
+  "architecture": "# Architecture Mirror (Repo Local)
+
+## Component Map
+
+1. Identity and access layer (\`Better-Auth\` session lifecycle and membership resolution).
+2. Domain core (\`packages/core\`) for deterministic policy and validation.
+3. Realtime backend (\`convex\`) for data model, functions, and events.
+4. Client apps (\`apps/web\`, \`apps/mobile\`).
+5. Public API/SDK (\`packages/sdk\`) with versioned capabilities.
+6. Media layer for upload policy and signed URL issuance.
+7. Moderation/audit controls and abuse limits.
+8. Minimal voice module (presence, join/leave, mute/deafen) with 25-user MVP target.
+
+## Architecture Constraints
+
+- Cloud mode: Convex Cloud EU primary.
+- Voice mode: LiveKit Cloud EU.
+- Self-host v1 packaging: Docker Compose only.
+- API governance: full parity public API from day one.
+
+## Key Data Flows
+
+- Message send: client -> permissioned mutation -> append -> realtime subscription update.
+- Attachment upload: client -> upload token -> storage -> attachment record.
+- Moderation: report -> queue -> action -> immutable audit log.
+
+## Source References
+
+- Obsidian source: \`architecture_blueprint.md\`
+- Obsidian source: \`v1_spec.md\`
+- Obsidian source: \`implementation_plan.md\`
+",
+  "decisions": "# Decision Mirror (Repo Local)
+
+This file mirrors locked product decisions from the Obsidian source of truth.
+
+## Locked Decisions (Enforced)
+
+| Decision | Locked Option | Enforced Interpretation |
+|---|---|---|
+| D-101 | A | Convex Cloud EU region primary cloud operating model. Temporary fallback note: if EU region availability is blocked, release gating requires an explicit ADR before any non-EU fallback. |
+| D-102 | A | LiveKit Cloud EU for MVP voice runtime. |
+| D-103 | A | MVP voice stability target is exactly 25 concurrent users. |
+| D-104 | B | Architecture target supports communities up to 100k members. |
+| D-105 | A | AGPL-3.0 applies repo-wide. |
+| D-106 | A | Full parity public API from day one. |
+| D-107 | A | Self-host packaging in v1 is Docker Compose only. |
+
+## Source References
+
+- Obsidian source: \`decisions.md\`
+- Obsidian source: \`open_decisions.md\`
+- Obsidian source: \`decision_briefs.md\`
+- Obsidian source: \`v1_spec.md\`
+",
+}
+`;
