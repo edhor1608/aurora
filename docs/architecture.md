@@ -26,6 +26,6 @@
 
 ## Source References
 
-- `/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/architecture_blueprint.md`
-- `/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/v1_spec.md`
-- `/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/implementation_plan.md`
+- Obsidian source: `architecture_blueprint.md`
+- Obsidian source: `v1_spec.md`
+- Obsidian source: `implementation_plan.md`

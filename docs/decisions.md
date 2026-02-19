@@ -16,7 +16,7 @@ This file mirrors locked product decisions from the Obsidian source of truth.
 
 ## Source References
 
-- `/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/decisions.md`
-- `/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/open_decisions.md`
-- `/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/decision_briefs.md`
-- `/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/v1_spec.md`
+- Obsidian source: `decisions.md`
+- Obsidian source: `open_decisions.md`
+- Obsidian source: `decision_briefs.md`
+- Obsidian source: `v1_spec.md`

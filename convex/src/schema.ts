@@ -1,3 +1,3 @@
-export type ConvexTable = "communities" | "channels" | "messages";
+export const tableNames = ["communities", "channels", "messages"] as const;
 
-export const tableNames: ConvexTable[] = ["communities", "channels", "messages"];
+export type ConvexTable = (typeof tableNames)[number];

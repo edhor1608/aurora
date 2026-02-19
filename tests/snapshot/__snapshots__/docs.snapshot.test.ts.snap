@@ -30,9 +30,9 @@ exports[`docs mirror > keeps locked decisions and architecture docs stable 1`] =
 
 ## Source References
 
-- \`/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/architecture_blueprint.md\`
-- \`/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/v1_spec.md\`
-- \`/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/implementation_plan.md\`
+- Obsidian source: \`architecture_blueprint.md\`
+- Obsidian source: \`v1_spec.md\`
+- Obsidian source: \`implementation_plan.md\`
 ",
   "decisions": "# Decision Mirror (Repo Local)
 
@@ -52,10 +52,10 @@ This file mirrors locked product decisions from the Obsidian source of truth.
 
 ## Source References
 
-- \`/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/decisions.md\`
-- \`/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/open_decisions.md\`
-- \`/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/decision_briefs.md\`
-- \`/Users/jonas/Library/Mobile Documents/iCloud~md~obsidian/Documents/Coding/Projekte/P20 Aurora EU Community Platform/docs/v1_spec.md\`
+- Obsidian source: \`decisions.md\`
+- Obsidian source: \`open_decisions.md\`
+- Obsidian source: \`decision_briefs.md\`
+- Obsidian source: \`v1_spec.md\`
 ",
 }
 `;
