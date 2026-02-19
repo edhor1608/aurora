@@ -2,9 +2,9 @@
 
 ## Command Gates
 
-- `bun run typecheck` must pass across all workspace packages.
-- `bun run lint` must pass with Biome checks.
-- `bun run test` must pass the layered suite.
+- Type checks must pass across all workspace packages: `bun run typecheck`.
+- Linting must pass with Biome checks: `bun run lint`.
+- The full layered suite must pass: `bun run test`.
 
 ## Test Layer Coverage
 
