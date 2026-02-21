@@ -29,3 +29,14 @@ Aurora is a European open community platform with Discord-like servers/channels,
 ## Locked Decisions
 
 See `/docs/decisions.md` for enforced D-101 to D-107 locks.
+
+<!-- status:start -->
+## Status
+- State: active
+- Summary: Define current milestone.
+- Next: Define next concrete step.
+- Updated: 2026-02-21
+- Branch: `main`
+- Working Tree: dirty (2 files)
+- Last Commit: 746914d (2026-02-19) chore: add repository CODEOWNERS (#4)
+<!-- status:end -->
