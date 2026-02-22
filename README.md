@@ -41,11 +41,9 @@ See `/docs/decisions.md` for enforced D-101 to D-107 locks.
 
 <!-- status:start -->
 ## Status
+
 - State: active
-- Summary: First runnable auth + persisted hello-message slice is wired.
-- Next: Add permission enforcement + realtime live updates.
+- Summary: Sprint 1 foundation is complete with a runnable Better Auth + Convex + TanStack Start vertical slice.
+- Next: add permission-aware channel/thread policy enforcement and live message subscriptions.
 - Updated: 2026-02-22
-- Branch: `codex/p20-s1-vertical-slice`
-- Working Tree: dirty
-- Last Commit: 0d7e830 (2026-02-22) feat(convex): scaffold direct better-auth integration
 <!-- status:end -->

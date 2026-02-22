@@ -11,7 +11,8 @@
 - Unit: permission resolver and SDK capability contract.
 - Integration: repository structure, governance docs, runtime pinning.
 - Snapshot: mirrored decision and architecture docs.
-- E2E: executes baseline workspace command flow.
+- E2E (CLI): executes baseline workspace command flow.
+- E2E (browser): validates sign-up/sign-in and persisted hello-message flow.
 
 ## Locked Decision Assertions
 

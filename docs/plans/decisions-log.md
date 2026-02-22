@@ -48,3 +48,17 @@
 - Decision: Implement a minimal production-shaped flow: web login/sign-up via TanStack Start Better Auth handler routes (`/api/auth/$`) and real Convex-backed message persistence through public `messages.sendMessage` and `messages.listMessages` using default community/channel/thread records.
 - Rationale: Provides a runnable user path (authenticate, post, read) while preserving long-term model primitives.
 - Consequences: We now have a concrete integration baseline to iterate on (permissions, richer channel/thread UX, realtime subscriptions) without rewriting the auth/database foundation.
+
+## ADR-S1-008
+
+- Context: TanStack Start + Better Auth + Convex integration patterns evolve quickly and drift from official wiring increases runtime/SSR risk.
+- Decision: Treat the official Convex Better Auth TanStack Start framework guide as the canonical wiring baseline and align router/root/auth client setup to it (`setupRouterSsrQueryIntegration`, root token handoff, provider `initialToken` flow).
+- Rationale: Reduces integration guesswork and keeps the project aligned with the supported upstream approach.
+- Consequences: Architecture conformance tests now guard the expected official integration shape.
+
+## ADR-S1-009
+
+- Context: Baseline command e2e test timeouts produced false negatives when full workspace commands exceeded one-minute subprocess limits.
+- Decision: Increase subprocess and test-level timeouts in the baseline command e2e test to account for realistic workspace execution time.
+- Rationale: Preserves the purpose of the baseline gate while removing flaky timeout failures.
+- Consequences: Baseline command e2e remains strict on exit codes but is stable under normal local/CI runtime variance.
