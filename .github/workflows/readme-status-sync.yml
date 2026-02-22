@@ -61,12 +61,7 @@ jobs:
           }
 
           if [[ ! -f "$STATUS_FILE" ]]; then
-            cat > "$STATUS_FILE" <<STATUS
-state=active
-summary=Define current milestone.
-next=Define next concrete step.
-updated=$TODAY
-STATUS
+            printf 'state=active\nsummary=Define current milestone.\nnext=Define next concrete step.\nupdated=%s\n' "$TODAY" > "$STATUS_FILE"
           fi
 
           state="$(read_status_value "state" "$STATUS_FILE")"
@@ -79,16 +74,14 @@ STATUS
           [[ -n "$next" ]] || next="Define next concrete step."
           [[ -n "$updated" ]] || updated="$TODAY"
 
-          block=$(cat <<BLOCK
-$START_MARKER
-## Status
-- State: $state
-- Summary: $summary
-- Next: $next
-- Updated: $updated
-$END_MARKER
-BLOCK
-)
+          block="$(printf '%s\n' \
+            "$START_MARKER" \
+            "## Status" \
+            "- State: $state" \
+            "- Summary: $summary" \
+            "- Next: $next" \
+            "- Updated: $updated" \
+            "$END_MARKER")"
 
           if grep -Fq "$START_MARKER" "$README" && grep -Fq "$END_MARKER" "$README"; then
             inblock=0
