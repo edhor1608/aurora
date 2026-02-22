@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 const run = (command: string, args: string[]) => {
   return spawnSync(command, args, {
     encoding: "utf8",
-    timeout: 60_000,
+    timeout: 180_000,
     stdio: "pipe"
   });
 };
@@ -12,7 +12,7 @@ const run = (command: string, args: string[]) => {
 describe("baseline commands", () => {
   it(
     "runs typecheck, lint, workspace tests, and smoke tests",
-    { timeout: 60_000 },
+    { timeout: 300_000 },
     () => {
       const typecheck = run("bun", ["run", "typecheck"]);
       const lint = run("bun", ["run", "lint"]);

@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
+    "start": "node .output/server/index.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "biome check src package.json vite.config.ts",
@@ -15,17 +16,25 @@
     "test:smoke": "node -e \"console.log('web smoke ok')\""
   },
   "dependencies": {
-    "@tanstack/react-devtools": "^0.7.0",
-    "@tanstack/react-router": "^1.132.0",
-    "@tanstack/react-router-devtools": "^1.132.0",
+    "@t3-oss/env-core": "^0.13.10",
+    "@convex-dev/better-auth": "^0.10.11",
+    "@convex-dev/react-query": "^0.1.0",
+    "@tanstack/react-devtools": "^0.9.6",
+    "@tanstack/react-query": "^5.90.21",
+    "@tanstack/react-router": "^1.162.2",
+    "@tanstack/react-router-devtools": "^1.162.2",
+    "@tanstack/react-router-ssr-query": "^1.162.2",
+    "@tanstack/react-start": "^1.162.2",
+    "better-auth": "^1.4.18",
+    "convex": "^1.32.0",
     "lucide-react": "^0.545.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.18",
-    "@tanstack/devtools-vite": "^0.3.11",
-    "@tanstack/router-plugin": "^1.132.0",
+    "@tanstack/devtools-vite": "^0.5.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
     "@types/node": "^22.10.2",

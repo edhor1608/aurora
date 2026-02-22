@@ -79,20 +79,6 @@ STATUS
           [[ -n "$next" ]] || next="Define next concrete step."
           [[ -n "$updated" ]] || updated="$TODAY"
 
-          branch="${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo detached)}"
-          dirty_files="$(git status --porcelain | wc -l | tr -d ' ')"
-          if [[ "$dirty_files" == "0" ]]; then
-            tree_state="clean"
-          else
-            tree_state="dirty ($dirty_files files)"
-          fi
-
-          if last_commit_out="$(git log -1 --date=short --pretty=format:'%h (%ad) %s' 2>/dev/null)"; then
-            last_commit="$last_commit_out"
-          else
-            last_commit="n/a"
-          fi
-
           block=$(cat <<BLOCK
 $START_MARKER
 ## Status
@@ -100,9 +86,6 @@ $START_MARKER
 - Summary: $summary
 - Next: $next
 - Updated: $updated
-- Branch: \`$branch\`
-- Working Tree: $tree_state
-- Last Commit: $last_commit
 $END_MARKER
 BLOCK
 )

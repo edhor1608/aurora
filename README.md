@@ -26,17 +26,24 @@ Aurora is a European open community platform with Discord-like servers/channels,
 - `bun run lint`
 - `bun run test`
 
+## Hello World Vertical Slice
+
+1. Ensure Convex functions are pushed: `bunx convex dev --once`
+2. Start web app: `bun run --filter @aurora/web dev`
+3. Open `http://localhost:3000`
+4. Use **Sign up** (or **Sign in**) and then send a message in **Hello Message**
+
+This flow is wired end-to-end through TanStack Start auth handlers (`/api/auth/$`) and Convex query/mutation APIs (`messages.listMessages`, `messages.sendMessage`) with persisted `community -> channel -> thread -> message` records.
+
 ## Locked Decisions
 
 See `/docs/decisions.md` for enforced D-101 to D-107 locks.
 
 <!-- status:start -->
 ## Status
+
 - State: active
-- Summary: Define current milestone.
-- Next: Define next concrete step.
-- Updated: 2026-02-21
-- Branch: `main`
-- Working Tree: dirty (2 files)
-- Last Commit: 746914d (2026-02-19) chore: add repository CODEOWNERS (#4)
+- Summary: Sprint 1 foundation is complete with a runnable Better Auth + Convex + TanStack Start vertical slice.
+- Next: add permission-aware channel/thread policy enforcement and live message subscriptions.
+- Updated: 2026-02-22
 <!-- status:end -->

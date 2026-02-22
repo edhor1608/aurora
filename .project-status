@@ -1,4 +1,4 @@
 state=active
-summary=Define current milestone.
-next=Define next concrete step.
-updated=2026-02-21
+summary=Sprint 1 foundation complete with runnable Better Auth + Convex + TanStack Start vertical slice.
+next=Expand permission model and realtime subscriptions on top of the existing hello-message flow.
+updated=2026-02-22
