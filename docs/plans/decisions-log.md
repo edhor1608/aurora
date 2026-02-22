@@ -45,6 +45,6 @@
 ## ADR-S1-007
 
 - Context: Sprint 1 needed a first real end-to-end slice (frontend + auth + persisted message), not only scaffolding/tests.
-- Decision: Implement a minimal production-shaped flow: web login/sign-up via Better Auth endpoints proxied by Vite, and real Convex-backed message persistence via `/api/messages` using default community/channel/thread records.
+- Decision: Implement a minimal production-shaped flow: web login/sign-up via TanStack Start Better Auth handler routes (`/api/auth/$`) and real Convex-backed message persistence through public `messages.sendMessage` and `messages.listMessages` using default community/channel/thread records.
 - Rationale: Provides a runnable user path (authenticate, post, read) while preserving long-term model primitives.
 - Consequences: We now have a concrete integration baseline to iterate on (permissions, richer channel/thread UX, realtime subscriptions) without rewriting the auth/database foundation.
