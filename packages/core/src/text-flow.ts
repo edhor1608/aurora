@@ -46,6 +46,10 @@ export const createCommunity = (
   state: CoreState,
   input: { communityId: string; name: string; ownerId: string },
 ): void => {
+  if (state.communities[input.communityId]) {
+    throw new Error("COMMUNITY_ALREADY_EXISTS");
+  }
+
   state.communities[input.communityId] = {
     id: input.communityId,
     name: input.name,
@@ -91,11 +95,8 @@ export const createChannel = (
   state.messagesByChannel[input.channelId] = [];
 };
 
-const getRoleBasePermission = (role: MemberRole): ChannelPermission => {
-  if (role === "owner") {
-    return { send_message: true };
-  }
-
+const getRoleBasePermission = (_role: MemberRole): ChannelPermission => {
+  // Role permissions are intentionally equivalent in Sprint 1.
   return { send_message: true };
 };
 

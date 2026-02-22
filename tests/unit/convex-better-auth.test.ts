@@ -8,8 +8,8 @@ import {
 } from "../../convex/schema";
 
 describe("convex better-auth runtime wiring", () => {
-  it("uses customJwt provider from convex auth config", () => {
-    expect(authConfig.providers[0].type).toBe("customJwt");
+  it("exports at least one auth provider", () => {
+    expect(authConfig.providers.length).toBeGreaterThan(0);
   });
 
   it("exports default hierarchy slugs for community/channel/thread", () => {

@@ -6,6 +6,7 @@ import { DEFAULT_CHANNEL_SLUG, DEFAULT_COMMUNITY_SLUG, DEFAULT_THREAD_SLUG } fro
 const communityName = "Aurora";
 const channelName = "General";
 const threadTitle = "Hello World";
+const MESSAGE_PAGE_SIZE = 50;
 
 const ensureDefaultSpaceInMutation = async (ctx: MutationCtx) => {
   const now = Date.now();
@@ -185,7 +186,7 @@ export const listMessages = query({
       .query("messages")
       .withIndex("by_thread_id_and_created_at", (q) => q.eq("threadId", space.threadId))
       .order("desc")
-      .take(50);
+      .take(MESSAGE_PAGE_SIZE);
 
     records.reverse();
     return records.map((record) => ({

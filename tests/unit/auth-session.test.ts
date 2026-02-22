@@ -38,4 +38,13 @@ describe("auth session", () => {
       "AUTH_SESSION_EXPIRED",
     );
   });
+
+  it("does not throw while session is active", async () => {
+    const session = await createSession({
+      userId: "u-1",
+      ttlSeconds: 60,
+    });
+
+    expect(() => assertActiveSession(session, session.issuedAt + 1_000)).not.toThrow();
+  });
 });

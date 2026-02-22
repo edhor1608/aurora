@@ -1,9 +1,9 @@
 import { betterAuth } from "better-auth";
 import { memoryAdapter } from "better-auth/adapters/memory";
 
-const SESSION_PASSWORD = "aurora-dev-password-123";
-const AUTH_BASE_URL = "http://localhost:3000";
-const AUTH_SECRET = "aurora-dev-secret-value-at-least-32-chars";
+const DEV_SESSION_PASSWORD = "aurora-dev-password-123";
+const DEV_AUTH_BASE_URL = "http://localhost:3000";
+const DEV_AUTH_SECRET = "aurora-dev-secret-value-at-least-32-chars";
 
 export type Session = {
   userId: string;
@@ -18,6 +18,12 @@ export type CreateSessionInput = {
   ttlSeconds: number;
 };
 
+type AuthRuntimeConfig = {
+  baseUrl: string;
+  secret: string;
+  sessionPassword: string;
+};
+
 const toTestEmail = (userId: string): string => {
   const localPart = userId
     .toLowerCase()
@@ -28,26 +34,49 @@ const toTestEmail = (userId: string): string => {
   return `${localPart || "user"}@aurora.test`;
 };
 
-const parseSessionToken = (setCookieHeader: string | null): string => {
+const resolveAuthRuntimeConfig = (): AuthRuntimeConfig => {
+  const isTest = process.env.NODE_ENV === "test";
+
+  const sessionPassword =
+    process.env.AURORA_SESSION_PASSWORD ?? (isTest ? DEV_SESSION_PASSWORD : "");
+  const baseUrl = process.env.AURORA_AUTH_BASE_URL ?? (isTest ? DEV_AUTH_BASE_URL : "");
+  const secret = process.env.AURORA_AUTH_SECRET ?? (isTest ? DEV_AUTH_SECRET : "");
+
+  if (!sessionPassword || !baseUrl || !secret) {
+    throw new Error("AUTH_CONFIG_MISSING");
+  }
+
+  return {
+    baseUrl,
+    secret,
+    sessionPassword,
+  };
+};
+
+const parseSessionCookie = (setCookieHeader: string | null): { name: string; token: string } => {
   if (!setCookieHeader) {
     throw new Error("AUTH_SESSION_CREATE_FAILED");
   }
 
-  const match = setCookieHeader.match(/(?:__Secure-)?better-auth\.session_token=([^;]+)/);
+  const match = setCookieHeader.match(/((?:__Secure-)?better-auth\.session_token)=([^;]+)/);
 
   if (!match) {
     throw new Error("AUTH_SESSION_CREATE_FAILED");
   }
 
-  return match[1];
+  return {
+    name: match[1],
+    token: match[2],
+  };
 };
 
 export const createSession = async (input: CreateSessionInput): Promise<Session> => {
+  const config = resolveAuthRuntimeConfig();
   let requestedUserId = input.userId;
 
   const auth = betterAuth({
-    baseURL: AUTH_BASE_URL,
-    secret: AUTH_SECRET,
+    baseURL: config.baseUrl,
+    secret: config.secret,
     database: memoryAdapter({
       user: [],
       session: [],
@@ -78,20 +107,20 @@ export const createSession = async (input: CreateSessionInput): Promise<Session>
   const signUpResponse = await auth.api.signUpEmail({
     body: {
       email: toTestEmail(input.userId),
-      password: SESSION_PASSWORD,
+      password: config.sessionPassword,
       name: input.userId,
     },
     asResponse: true,
   });
 
-  if (signUpResponse.status !== 200) {
+  if (!signUpResponse.ok) {
     throw new Error("AUTH_SESSION_CREATE_FAILED");
   }
 
-  const token = parseSessionToken(signUpResponse.headers.get("set-cookie"));
+  const { name: cookieName, token } = parseSessionCookie(signUpResponse.headers.get("set-cookie"));
   const resolvedSession = await auth.api.getSession({
     headers: new Headers({
-      cookie: `better-auth.session_token=${token}`,
+      cookie: `${cookieName}=${token}`,
     }),
   });
 

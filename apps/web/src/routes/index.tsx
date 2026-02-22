@@ -50,38 +50,54 @@ function HomePage() {
     event.preventDefault();
     setIsBusy(true);
     setStatus({ message: "Creating account...", tone: "idle" });
-    const result = await signUp.email({ email, password, name });
-    if (result.error) {
-      setError(result.error.message || "Sign up failed");
+    try {
+      const result = await signUp.email({ email, password, name });
+      if (result.error) {
+        setError(result.error.message || "Sign up failed");
+        return;
+      }
+      await router.invalidate();
+      setSuccess("Signed up");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setError(message);
+    } finally {
       setIsBusy(false);
-      return;
     }
-    await router.invalidate();
-    setSuccess("Signed up");
-    setIsBusy(false);
   };
 
   const onSignIn = async () => {
     setIsBusy(true);
     setStatus({ message: "Signing in...", tone: "idle" });
-    const result = await signIn.email({ email, password });
-    if (result.error) {
-      setError(result.error.message || "Sign in failed");
+    try {
+      const result = await signIn.email({ email, password });
+      if (result.error) {
+        setError(result.error.message || "Sign in failed");
+        return;
+      }
+      await router.invalidate();
+      setSuccess("Signed in");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setError(message);
+    } finally {
       setIsBusy(false);
-      return;
     }
-    await router.invalidate();
-    setSuccess("Signed in");
-    setIsBusy(false);
   };
 
   const onSignOut = async () => {
     setIsBusy(true);
     setStatus({ message: "Signing out...", tone: "idle" });
-    await signOut();
-    await router.invalidate();
-    setSuccess("Signed out");
-    setIsBusy(false);
+    try {
+      await signOut();
+      await router.invalidate();
+      setSuccess("Signed out");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setError(message);
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   const onSendMessage = async (event: FormEvent<HTMLFormElement>) => {

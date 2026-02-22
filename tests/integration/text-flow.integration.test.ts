@@ -153,4 +153,22 @@ describe("text flow vertical slice", () => {
       }),
     ).toThrowError("PERMISSION_DENIED");
   });
+
+  it("rejects duplicate community identifiers", () => {
+    const state = createCoreState();
+
+    createCommunity(state, {
+      communityId: "c-1",
+      name: "Aurora",
+      ownerId: "owner-1",
+    });
+
+    expect(() =>
+      createCommunity(state, {
+        communityId: "c-1",
+        name: "Aurora",
+        ownerId: "owner-1",
+      }),
+    ).toThrowError("COMMUNITY_ALREADY_EXISTS");
+  });
 });
