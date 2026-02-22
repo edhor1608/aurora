@@ -17,6 +17,7 @@
 - Voice mode: LiveKit Cloud EU.
 - Self-host v1 packaging: Docker Compose only.
 - API governance: full parity public API from day one.
+- Auth integration: Better Auth runs through Convex via `@convex-dev/better-auth`.
 
 ## Key Data Flows
 
