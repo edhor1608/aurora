@@ -1,31 +1,48 @@
-import { fetchAuthQuery, getToken } from "@/lib/auth-server";
+/// <reference types="vite/client" />
+import { authClient } from "@/lib/auth-client";
+import { getToken } from "@/lib/auth-server";
 import type { AppRouterContext } from "@/lib/router-context";
+import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { createServerFn } from "@tanstack/react-start";
 import type { ReactNode } from "react";
-import { api } from "../../../../convex/_generated/api";
 import appCss from "../styles.css?url";
+
+const getAuth = createServerFn({ method: "GET" }).handler(async () => {
+  return getToken();
+});
 
 export const Route = createRootRouteWithContext<AppRouterContext>()({
   beforeLoad: async ({ context }) => {
-    if (typeof document !== "undefined") {
-      return {
-        session: context.session,
-      };
+    const token = await getAuth();
+
+    if (token) {
+      context.convexQueryClient.serverHttpClient?.setAuth(token);
     }
-    const token = await getToken();
-    const session = token ? await fetchAuthQuery(api.auth.getCurrentUser, {}) : null;
+
     return {
-      session,
+      isAuthenticated: Boolean(token),
+      token,
     };
   },
   component: RootComponent,
-  shellComponent: RootDocument,
 });
 
 function RootComponent() {
-  return <Outlet />;
+  const context = Route.useRouteContext();
+  return (
+    <ConvexBetterAuthProvider
+      authClient={authClient}
+      client={context.convexQueryClient.convexClient}
+      initialToken={context.token}
+    >
+      <RootDocument>
+        <Outlet />
+      </RootDocument>
+    </ConvexBetterAuthProvider>
+  );
 }
 
 function RootDocument({ children }: { children: ReactNode }) {

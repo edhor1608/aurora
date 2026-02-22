@@ -33,8 +33,8 @@ function HomePage() {
   const routeContext = Route.useRouteContext();
   const { data: sessionData, isPending: isSessionPending } = useSession();
   const isSignedIn = useMemo(
-    () => Boolean(sessionData?.session || routeContext.session),
-    [routeContext.session, sessionData?.session],
+    () => Boolean(sessionData?.session || routeContext.token),
+    [routeContext.token, sessionData?.session],
   );
   const messagesQuery = useQuery({
     ...convexQuery(api.messages.listMessages, isSignedIn ? {} : "skip"),

@@ -12,7 +12,7 @@ describe("web app follows TanStack Start + Better Auth + Convex architecture", (
 
     expect(deps["@tanstack/react-start"]).toBeDefined();
     expect(deps["@tanstack/react-query"]).toBeDefined();
-    expect(deps["@tanstack/react-router-with-query"]).toBeDefined();
+    expect(deps["@tanstack/react-router-ssr-query"]).toBeDefined();
     expect(deps["@convex-dev/better-auth"]).toBeDefined();
     expect(deps["@convex-dev/react-query"]).toBeDefined();
     expect(deps["better-auth"]).toBeDefined();
@@ -39,26 +39,27 @@ describe("web app follows TanStack Start + Better Auth + Convex architecture", (
     expect(authRoute).toContain("handler(request)");
   });
 
-  it("uses root route context + beforeLoad auth prefetch", () => {
+  it("uses root route server token handoff and provider initial token", () => {
     const rootRoute = read("apps/web/src/routes/__root.tsx");
 
     expect(rootRoute).toContain("createRootRouteWithContext");
     expect(rootRoute).toContain("beforeLoad");
-    expect(rootRoute).toContain("getToken()");
-    expect(rootRoute).toContain("fetchAuthQuery");
-    expect(rootRoute).toContain("api.auth.getCurrentUser");
-    expect(rootRoute).toContain("AppRouterContext");
+    expect(rootRoute).toContain("createServerFn");
+    expect(rootRoute).toContain("getAuth");
+    expect(rootRoute).toContain("serverHttpClient?.setAuth(token)");
+    expect(rootRoute).toContain("ConvexBetterAuthProvider");
+    expect(rootRoute).toContain("initialToken={context.token}");
   });
 
-  it("uses routerWithQueryClient + ConvexQueryClient + ConvexBetterAuthProvider in router setup", () => {
+  it("uses router SSR query integration with ConvexQueryClient context", () => {
     const router = read("apps/web/src/router.tsx");
     const authClient = read("apps/web/src/lib/auth-client.ts");
 
-    expect(router).toContain("routerWithQueryClient");
+    expect(router).toContain("setupRouterSsrQueryIntegration");
+    expect(router).toContain("createTanStackRouter");
     expect(router).toContain("ConvexQueryClient");
     expect(router).toContain("expectAuth");
-    expect(router).toContain("ConvexBetterAuthProvider");
-    expect(router).toContain("defaultPreloadStaleTime");
+    expect(router).toContain("context: { queryClient, convexQueryClient }");
     expect(authClient).toContain("createAuthClient");
     expect(authClient).toContain("convexClient()");
   });
