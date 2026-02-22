@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -108,18 +109,18 @@ jobs:
             printf '\n%s\n' "$block" >> "$README"
           fi
 
-      - name: Commit and push
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          if git diff --quiet -- README.md .project-status; then
-            echo "No status changes."
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md .project-status
-          git commit -m "chore: sync README status"
-          git push
+      - name: Create pull request for status sync
+        uses: peter-evans/create-pull-request@v7
+        with:
+          add-paths: |
+            README.md
+            .project-status
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          base: main
+          branch: automation/readme-status-sync
+          commit-message: "chore: sync README status"
+          delete-branch: true
+          sign-commits: true
+          title: "chore: sync README status"
+          body: |
+            Automated status sync from `.project-status` into `README.md`.
