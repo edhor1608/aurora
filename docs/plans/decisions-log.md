@@ -20,3 +20,10 @@
 - Decision: Mirror a temporary fallback gate note in repo docs, requiring explicit ADR before any non-EU fallback.
 - Rationale: Avoids silent drift from EU-first operating model.
 - Consequences: Cloud fallback remains an open governance decision.
+
+## ADR-S1-004
+
+- Context: Sprint 1 plan expects a first permissioned text flow, but the repository only had foundation scaffolding.
+- Decision: Implement a core-level vertical slice first (session lifecycle + permissioned text flow in `packages/core`) with TDD before wiring web/mobile/convex runtime endpoints.
+- Rationale: Delivers verifiable domain behavior quickly while keeping integration complexity bounded.
+- Consequences: Product logic is now testable and reusable, but UI/backend integration work is still required for end-user flow.
