@@ -34,3 +34,10 @@
 - Decision: Replace manual session creation with Better Auth-backed session issuance in `packages/core/src/auth.ts`, using the memory adapter for Sprint 1 test/runtime scaffolding.
 - Rationale: Aligns implementation with auth stack choice early and avoids growing custom auth logic that would be discarded later.
 - Consequences: Auth session creation is now async and test coverage validates Better Auth behavior directly.
+
+## ADR-S1-006
+
+- Context: Better Auth should integrate directly with Convex for runtime auth, not as an isolated in-memory setup.
+- Decision: Add Convex-native Better Auth scaffolding in `convex/src/auth-config.ts` and `convex/src/better-auth.ts` using `@convex-dev/better-auth` (`getAuthConfigProvider`, `createClient`, `convex` plugin).
+- Rationale: Matches official Better Auth + Convex integration guidance and keeps auth architecture aligned with Convex as the backend authority.
+- Consequences: Sprint 1 now includes a typed integration surface for Convex auth wiring, while core in-memory helpers remain test harness code until runtime endpoints are connected.
