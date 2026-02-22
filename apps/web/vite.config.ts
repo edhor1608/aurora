@@ -6,21 +6,24 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 const config = defineConfig({
+  build: {
+    rollupOptions: {
+      external: ["node:async_hooks", "node:stream", "node:stream/web", "stream", "async_hooks"],
+    },
+  },
   envDir: "../../",
+  optimizeDeps: {
+    exclude: ["@resvg/resvg-js", "satori"],
+  },
   plugins: [
     devtools(),
     tsconfigPaths({ projects: ["./tsconfig.json"] }),
     tailwindcss(),
-    tanstackStart({
-      srcDirectory: "src",
-    }),
+    tanstackStart(),
     viteReact(),
   ],
-  resolve: {
-    dedupe: ["react", "react-dom"],
-  },
   ssr: {
-    noExternal: ["@convex-dev/better-auth"],
+    external: ["@resvg/resvg-js"],
   },
 });
 

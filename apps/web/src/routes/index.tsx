@@ -1,6 +1,7 @@
 import { signIn, signOut, signUp, useSession } from "@/lib/auth-client";
-import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery } from "convex/react";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { type FormEvent, useMemo, useState } from "react";
 import { api } from "../../../../convex/_generated/api";
 
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
+  const router = useRouter();
   const [email, setEmail] = useState("hello@aurora.test");
   const [password, setPassword] = useState("Password123!");
   const [name, setName] = useState("Aurora Tester");
@@ -28,10 +30,18 @@ function HomePage() {
   const [status, setStatus] = useState<StatusState>(defaultStatus);
   const [isBusy, setIsBusy] = useState(false);
 
+  const routeContext = Route.useRouteContext();
   const { data: sessionData, isPending: isSessionPending } = useSession();
-  const isSignedIn = useMemo(() => Boolean(sessionData?.session), [sessionData?.session]);
-  const messages = useQuery(api.messages.listMessages, isSignedIn ? {} : "skip");
-  const sendMessage = useMutation(api.messages.sendMessage);
+  const isSignedIn = useMemo(
+    () => Boolean(sessionData?.session || routeContext.session),
+    [routeContext.session, sessionData?.session],
+  );
+  const messagesQuery = useQuery({
+    ...convexQuery(api.messages.listMessages, isSignedIn ? {} : "skip"),
+    gcTime: 5_000,
+  });
+  const sendMessageFn = useConvexMutation(api.messages.sendMessage);
+  const sendMessage = useMutation({ mutationFn: sendMessageFn });
 
   const setError = (message: string) => setStatus({ message, tone: "error" });
   const setSuccess = (message: string) => setStatus({ message, tone: "success" });
@@ -46,6 +56,7 @@ function HomePage() {
       setIsBusy(false);
       return;
     }
+    await router.invalidate();
     setSuccess("Signed up");
     setIsBusy(false);
   };
@@ -59,6 +70,7 @@ function HomePage() {
       setIsBusy(false);
       return;
     }
+    await router.invalidate();
     setSuccess("Signed in");
     setIsBusy(false);
   };
@@ -67,6 +79,7 @@ function HomePage() {
     setIsBusy(true);
     setStatus({ message: "Signing out...", tone: "idle" });
     await signOut();
+    await router.invalidate();
     setSuccess("Signed out");
     setIsBusy(false);
   };
@@ -82,7 +95,7 @@ function HomePage() {
     setIsBusy(true);
     setStatus({ message: "Sending message...", tone: "idle" });
     try {
-      await sendMessage({ body: normalizedBody });
+      await sendMessage.mutateAsync({ body: normalizedBody });
       setMessageInput("");
       setSuccess("Message sent");
     } catch (error) {
@@ -176,7 +189,7 @@ function HomePage() {
           </div>
         </form>
         <ul className="messages">
-          {(messages ?? []).map((message) => (
+          {(messagesQuery.data ?? []).map((message) => (
             <li className="message" key={message.messageId}>
               <p>{message.body}</p>
               <small className="mono">
