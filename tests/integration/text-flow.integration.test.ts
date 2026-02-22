@@ -10,7 +10,7 @@ import {
 } from "../../packages/core/src/text-flow";
 
 describe("text flow vertical slice", () => {
-  it("supports create community -> channel -> send/list message", () => {
+  it("supports create community -> channel -> send/list message", async () => {
     const state = createCoreState();
 
     createCommunity(state, {
@@ -32,15 +32,14 @@ describe("text flow vertical slice", () => {
       overrides: [],
     });
 
-    const session = createSession({
+    const session = await createSession({
       userId: "member-1",
       ttlSeconds: 60,
-      now: 1000,
     });
 
     const message = sendMessage(state, {
       session,
-      now: 1500,
+      now: session.issuedAt + 500,
       channelId: "ch-1",
       content: "hello aurora",
     });
@@ -56,7 +55,7 @@ describe("text flow vertical slice", () => {
     expect(listMessages(state, { channelId: "ch-1" })).toEqual([message]);
   });
 
-  it("rejects expired sessions", () => {
+  it("rejects expired sessions", async () => {
     const state = createCoreState();
 
     createCommunity(state, {
@@ -72,23 +71,22 @@ describe("text flow vertical slice", () => {
       overrides: [],
     });
 
-    const session = createSession({
+    const session = await createSession({
       userId: "owner-1",
       ttlSeconds: 1,
-      now: 1000,
     });
 
     expect(() =>
       sendMessage(state, {
         session,
-        now: 2000,
+        now: session.expiresAt,
         channelId: "ch-1",
         content: "late message",
       }),
     ).toThrowError("AUTH_SESSION_EXPIRED");
   });
 
-  it("rejects users without community membership", () => {
+  it("rejects users without community membership", async () => {
     const state = createCoreState();
 
     createCommunity(state, {
@@ -104,23 +102,22 @@ describe("text flow vertical slice", () => {
       overrides: [],
     });
 
-    const session = createSession({
+    const session = await createSession({
       userId: "outsider-1",
       ttlSeconds: 60,
-      now: 1000,
     });
 
     expect(() =>
       sendMessage(state, {
         session,
-        now: 1200,
+        now: session.issuedAt + 200,
         channelId: "ch-1",
         content: "unauthorized",
       }),
     ).toThrowError("AUTH_FORBIDDEN");
   });
 
-  it("enforces channel-level send permission overrides", () => {
+  it("enforces channel-level send permission overrides", async () => {
     const state = createCoreState();
 
     createCommunity(state, {
@@ -142,16 +139,15 @@ describe("text flow vertical slice", () => {
       overrides: [{ send_message: false }],
     });
 
-    const session = createSession({
+    const session = await createSession({
       userId: "member-1",
       ttlSeconds: 60,
-      now: 1000,
     });
 
     expect(() =>
       sendMessage(state, {
         session,
-        now: 1200,
+        now: session.issuedAt + 200,
         channelId: "ch-1",
         content: "blocked",
       }),

@@ -27,3 +27,10 @@
 - Decision: Implement a core-level vertical slice first (session lifecycle + permissioned text flow in `packages/core`) with TDD before wiring web/mobile/convex runtime endpoints.
 - Rationale: Delivers verifiable domain behavior quickly while keeping integration complexity bounded.
 - Consequences: Product logic is now testable and reusable, but UI/backend integration work is still required for end-user flow.
+
+## ADR-S1-005
+
+- Context: The initial vertical slice used hand-rolled session objects, which conflicts with the project direction to standardize on Better Auth.
+- Decision: Replace manual session creation with Better Auth-backed session issuance in `packages/core/src/auth.ts`, using the memory adapter for Sprint 1 test/runtime scaffolding.
+- Rationale: Aligns implementation with auth stack choice early and avoids growing custom auth logic that would be discarded later.
+- Consequences: Auth session creation is now async and test coverage validates Better Auth behavior directly.
