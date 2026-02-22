@@ -1,41 +1,19 @@
+import { signIn, signOut, signUp, useSession } from "@/lib/auth-client";
 import { createFileRoute } from "@tanstack/react-router";
-import { type FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { type FormEvent, useMemo, useState } from "react";
+import { api } from "../../../../convex/_generated/api";
 
-type SessionPayload = {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-  };
-  session: {
-    id: string;
-    userId: string;
-  };
+type StatusTone = "idle" | "error" | "success";
+
+type StatusState = {
+  message: string;
+  tone: StatusTone;
 };
 
-type MessagePayload = {
-  messageId: string;
-  authorId: string;
-  body: string;
-  createdAt: number;
-};
-
-type MessagesResponse = {
-  ok: boolean;
-  messages: MessagePayload[];
-};
-
-const parseJson = async <T,>(response: Response): Promise<T | null> => {
-  try {
-    return (await response.json()) as T;
-  } catch {
-    return null;
-  }
-};
-
-const readErrorMessage = async (response: Response): Promise<string> => {
-  const payload = await parseJson<{ message?: string; code?: string }>(response);
-  return payload?.message ?? payload?.code ?? `Request failed (${response.status})`;
+const defaultStatus: StatusState = {
+  message: "Ready",
+  tone: "idle",
 };
 
 export const Route = createFileRoute("/")({
@@ -47,181 +25,84 @@ function HomePage() {
   const [password, setPassword] = useState("Password123!");
   const [name, setName] = useState("Aurora Tester");
   const [messageInput, setMessageInput] = useState("hello world");
-  const [session, setSession] = useState<SessionPayload | null>(null);
-  const [messages, setMessages] = useState<MessagePayload[]>([]);
-  const [status, setStatus] = useState("Ready");
+  const [status, setStatus] = useState<StatusState>(defaultStatus);
   const [isBusy, setIsBusy] = useState(false);
 
-  const isSignedIn = useMemo(() => Boolean(session), [session]);
+  const { data: sessionData, isPending: isSessionPending } = useSession();
+  const isSignedIn = useMemo(() => Boolean(sessionData?.session), [sessionData?.session]);
+  const messages = useQuery(api.messages.listMessages, isSignedIn ? {} : "skip");
+  const sendMessage = useMutation(api.messages.sendMessage);
 
-  const refreshSession = useCallback(async () => {
-    const response = await fetch("/api/auth/get-session", {
-      method: "GET",
-      credentials: "include",
-    });
+  const setError = (message: string) => setStatus({ message, tone: "error" });
+  const setSuccess = (message: string) => setStatus({ message, tone: "success" });
 
-    if (!response.ok) {
-      setSession(null);
-      return;
-    }
-
-    const payload = await parseJson<SessionPayload | null>(response);
-    setSession(payload);
-  }, []);
-
-  const refreshMessages = useCallback(async () => {
-    const response = await fetch("/api/messages", {
-      method: "GET",
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      const message = await readErrorMessage(response);
-      setStatus(message);
-      setMessages([]);
-      return;
-    }
-
-    const payload = await parseJson<MessagesResponse>(response);
-    setMessages(payload?.messages ?? []);
-  }, []);
-
-  useEffect(() => {
-    void refreshSession();
-  }, [refreshSession]);
-
-  useEffect(() => {
-    if (!isSignedIn) {
-      setMessages([]);
-      return;
-    }
-
-    void refreshMessages();
-  }, [isSignedIn, refreshMessages]);
-
-  const signUp = async (event: FormEvent<HTMLFormElement>) => {
+  const onSignUp = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsBusy(true);
-    setStatus("Creating account...");
-
-    const response = await fetch("/api/auth/sign-up/email", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-        name,
-      }),
-    });
-
-    if (!response.ok) {
-      setStatus(await readErrorMessage(response));
+    setStatus({ message: "Creating account...", tone: "idle" });
+    const result = await signUp.email({ email, password, name });
+    if (result.error) {
+      setError(result.error.message || "Sign up failed");
       setIsBusy(false);
       return;
     }
-
-    await refreshSession();
-    await refreshMessages();
-    setStatus("Signed up");
+    setSuccess("Signed up");
     setIsBusy(false);
   };
 
-  const signIn = async () => {
+  const onSignIn = async () => {
     setIsBusy(true);
-    setStatus("Signing in...");
-
-    const response = await fetch("/api/auth/sign-in/email", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-
-    if (!response.ok) {
-      setStatus(await readErrorMessage(response));
+    setStatus({ message: "Signing in...", tone: "idle" });
+    const result = await signIn.email({ email, password });
+    if (result.error) {
+      setError(result.error.message || "Sign in failed");
       setIsBusy(false);
       return;
     }
-
-    await refreshSession();
-    await refreshMessages();
-    setStatus("Signed in");
+    setSuccess("Signed in");
     setIsBusy(false);
   };
 
-  const signOut = async () => {
+  const onSignOut = async () => {
     setIsBusy(true);
-    setStatus("Signing out...");
-
-    const response = await fetch("/api/auth/sign-out", {
-      method: "POST",
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      setStatus(await readErrorMessage(response));
-      setIsBusy(false);
-      return;
-    }
-
-    setSession(null);
-    setMessages([]);
-    setStatus("Signed out");
+    setStatus({ message: "Signing out...", tone: "idle" });
+    await signOut();
+    setSuccess("Signed out");
     setIsBusy(false);
   };
 
-  const sendMessage = async (event: FormEvent<HTMLFormElement>) => {
+  const onSendMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (!messageInput.trim()) {
-      setStatus("Message body cannot be empty");
+    const normalizedBody = messageInput.trim();
+    if (!normalizedBody) {
+      setError("Message body cannot be empty");
       return;
     }
 
     setIsBusy(true);
-    setStatus("Sending message...");
-
-    const response = await fetch("/api/messages", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        body: messageInput,
-      }),
-    });
-
-    if (!response.ok) {
-      setStatus(await readErrorMessage(response));
+    setStatus({ message: "Sending message...", tone: "idle" });
+    try {
+      await sendMessage({ body: normalizedBody });
+      setMessageInput("");
+      setSuccess("Message sent");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to send message";
+      setError(message);
+    } finally {
       setIsBusy(false);
-      return;
     }
-
-    setMessageInput("");
-    await refreshMessages();
-    setStatus("Message sent");
-    setIsBusy(false);
   };
 
   return (
     <main className="page">
       <h1>Aurora Hello World</h1>
       <p className="hint">
-        Minimal vertical slice: Better Auth + Convex + real message persistence.
+        Real MVP slice: Better Auth + Convex + TanStack Start with persisted messages.
       </p>
 
       <section className="panel">
         <h2>Auth</h2>
-        <form className="stack" onSubmit={signUp}>
+        <form className="stack" onSubmit={onSignUp}>
           <label className="field">
             <span>Name</span>
             <input
@@ -254,10 +135,10 @@ function HomePage() {
             <button disabled={isBusy} type="submit">
               Sign up
             </button>
-            <button disabled={isBusy} onClick={() => void signIn()} type="button">
+            <button disabled={isBusy} onClick={() => void onSignIn()} type="button">
               Sign in
             </button>
-            <button disabled={isBusy || !isSignedIn} onClick={signOut} type="button">
+            <button disabled={isBusy || !isSignedIn} onClick={() => void onSignOut()} type="button">
               Sign out
             </button>
           </div>
@@ -266,9 +147,11 @@ function HomePage() {
 
       <section className="panel">
         <h2>Session</h2>
-        {session ? (
+        {isSessionPending ? (
+          <p className="hint">Loading session...</p>
+        ) : sessionData?.user ? (
           <p className="mono">
-            {session.user.name} ({session.user.email}) [{session.user.id}]
+            {sessionData.user.name} ({sessionData.user.email}) [{sessionData.user.id}]
           </p>
         ) : (
           <p className="hint">No active session</p>
@@ -277,7 +160,7 @@ function HomePage() {
 
       <section className="panel">
         <h2>Hello Message</h2>
-        <form className="stack" onSubmit={sendMessage}>
+        <form className="stack" onSubmit={onSendMessage}>
           <label className="field">
             <span>Message</span>
             <input
@@ -290,17 +173,10 @@ function HomePage() {
             <button disabled={isBusy || !isSignedIn} type="submit">
               Send
             </button>
-            <button
-              disabled={isBusy || !isSignedIn}
-              onClick={() => void refreshMessages()}
-              type="button"
-            >
-              Refresh
-            </button>
           </div>
         </form>
         <ul className="messages">
-          {messages.map((message) => (
+          {(messages ?? []).map((message) => (
             <li className="message" key={message.messageId}>
               <p>{message.body}</p>
               <small className="mono">
@@ -311,7 +187,9 @@ function HomePage() {
         </ul>
       </section>
 
-      <p className="status mono">{status}</p>
+      <p className={`status mono ${status.tone === "error" ? "status-error" : ""}`}>
+        {status.message}
+      </p>
     </main>
   );
 }

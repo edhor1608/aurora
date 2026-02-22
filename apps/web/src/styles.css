@@ -74,6 +74,10 @@ button:disabled {
   color: var(--accent-ink);
 }
 
+.status-error {
+  color: #9f1239;
+}
+
 .mono {
   font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
 }

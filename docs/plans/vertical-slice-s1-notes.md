@@ -5,9 +5,10 @@
 - Replaced custom auth session fabrication with Better Auth-backed session issuance (`better-auth` + memory adapter) in `packages/core/src/auth.ts`.
 - Added core permissioned text-flow primitives (`createCommunity`, `addMember`, `createChannel`, `sendMessage`, `listMessages`).
 - Added test-first coverage for auth/session and permissioned message flow.
-- Added Convex runtime wiring (`convex/convex.config.ts`, `convex/auth.config.ts`, `convex/auth.ts`, `convex/http.ts`) and initialized cloud deployment.
-- Added first web login + message flow UI with TanStack routes and Vite proxy to Convex auth/message HTTP endpoints.
-- Added persisted default space hierarchy in Convex (`community -> channel -> thread`) and real message insertion/listing on top.
+- Added Convex runtime wiring (`convex/convex.config.ts`, `convex/auth.config.ts`, `convex/auth.ts`, `convex/http.ts`) with Better Auth token route support (`/api/auth/convex/token`) and cloud deployment.
+- Migrated web runtime to TanStack Start with auth handler route (`apps/web/src/routes/api/auth.$.ts`) using `convexBetterAuthReactStart`.
+- Added `ConvexBetterAuthProvider` + Better Auth client plugin wiring in web for authenticated Convex query/mutation calls.
+- Added persisted default space hierarchy in Convex (`community -> channel -> thread`) and real message insertion/listing via public `messages.sendMessage` + `messages.listMessages`.
 
 ## Test coverage added
 

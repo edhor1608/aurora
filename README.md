@@ -33,7 +33,7 @@ Aurora is a European open community platform with Discord-like servers/channels,
 3. Open `http://localhost:3000`
 4. Use **Sign up** (or **Sign in**) and then send a message in **Hello Message**
 
-This flow is wired end-to-end through Better Auth (`/api/auth`) and Convex (`/api/messages`) with persisted `community -> channel -> thread -> message` records.
+This flow is wired end-to-end through TanStack Start auth handlers (`/api/auth/$`) and Convex query/mutation APIs (`messages.listMessages`, `messages.sendMessage`) with persisted `community -> channel -> thread -> message` records.
 
 ## Locked Decisions
 

@@ -1,37 +1,40 @@
 import { type GenericCtx, createClient } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
-import { betterAuth } from "better-auth";
+import { betterAuth } from "better-auth/minimal";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
+import { query } from "./_generated/server";
 import authConfig from "./auth.config";
-
-const DEV_AUTH_SECRET = "aurora-dev-auth-secret-please-replace-in-prod-32+";
-
-const resolveTrustedOrigins = (): string[] => {
-  const defaults = ["http://localhost:3000", "http://127.0.0.1:3000"];
-  const fromEnv = [process.env.SITE_URL, process.env.WEB_URL, process.env.CONVEX_SITE_URL].filter(
-    (value): value is string => Boolean(value),
-  );
-
-  return Array.from(new Set([...defaults, ...fromEnv]));
-};
 
 export const authComponent = createClient<DataModel>(components.betterAuth);
 
 export const createAuth = (ctx: GenericCtx<DataModel>) => {
+  const siteUrl = process.env.SITE_URL;
+  const secret = process.env.BETTER_AUTH_SECRET;
+
+  if (!siteUrl) {
+    throw new Error("SITE_URL must be set in Convex deployment environment");
+  }
+
+  if (!secret) {
+    throw new Error("BETTER_AUTH_SECRET must be set in Convex deployment environment");
+  }
+
   return betterAuth({
+    baseURL: siteUrl,
     database: authComponent.adapter(ctx),
-    secret: process.env.BETTER_AUTH_SECRET ?? DEV_AUTH_SECRET,
-    baseURL: process.env.CONVEX_SITE_URL,
-    basePath: "/api/auth",
-    trustedOrigins: resolveTrustedOrigins(),
+    secret,
     emailAndPassword: {
       enabled: true,
+      requireEmailVerification: false,
     },
-    plugins: [
-      convex({
-        authConfig,
-      }),
-    ],
+    plugins: [convex({ authConfig })],
   });
 };
+
+export const getCurrentUser = query({
+  args: {},
+  handler: async (ctx) => {
+    return authComponent.getAuthUser(ctx);
+  },
+});

@@ -1,11 +1,6 @@
 import { ConvexError, v } from "convex/values";
-import {
-  type MutationCtx,
-  type QueryCtx,
-  internalMutation,
-  mutation,
-  query,
-} from "./_generated/server";
+import { type MutationCtx, type QueryCtx, mutation, query } from "./_generated/server";
+import { authComponent } from "./auth";
 import { DEFAULT_CHANNEL_SLUG, DEFAULT_COMMUNITY_SLUG, DEFAULT_THREAD_SLUG } from "./schema";
 
 const communityName = "Aurora";
@@ -21,9 +16,9 @@ const ensureDefaultSpaceInMutation = async (ctx: MutationCtx) => {
 
   if (!community) {
     const communityId = await ctx.db.insert("communities", {
-      slug: DEFAULT_COMMUNITY_SLUG,
-      name: communityName,
       createdAt: now,
+      name: communityName,
+      slug: DEFAULT_COMMUNITY_SLUG,
     });
     community = await ctx.db.get(communityId);
   }
@@ -42,9 +37,9 @@ const ensureDefaultSpaceInMutation = async (ctx: MutationCtx) => {
   if (!channel) {
     const channelId = await ctx.db.insert("channels", {
       communityId: community._id,
-      slug: DEFAULT_CHANNEL_SLUG,
-      name: channelName,
       createdAt: now,
+      name: channelName,
+      slug: DEFAULT_CHANNEL_SLUG,
     });
     channel = await ctx.db.get(channelId);
   }
@@ -63,9 +58,9 @@ const ensureDefaultSpaceInMutation = async (ctx: MutationCtx) => {
   if (!thread) {
     const threadId = await ctx.db.insert("threads", {
       channelId: channel._id,
+      createdAt: now,
       slug: DEFAULT_THREAD_SLUG,
       title: threadTitle,
-      createdAt: now,
     });
     thread = await ctx.db.get(threadId);
   }
@@ -75,8 +70,8 @@ const ensureDefaultSpaceInMutation = async (ctx: MutationCtx) => {
   }
 
   return {
-    communityId: community._id,
     channelId: channel._id,
+    communityId: community._id,
     threadId: thread._id,
   };
 };
@@ -86,10 +81,7 @@ const getDefaultSpaceInQuery = async (ctx: QueryCtx) => {
     .query("communities")
     .withIndex("by_slug", (q) => q.eq("slug", DEFAULT_COMMUNITY_SLUG))
     .unique();
-
-  if (!community) {
-    return null;
-  }
+  if (!community) return null;
 
   const channel = await ctx.db
     .query("channels")
@@ -97,10 +89,7 @@ const getDefaultSpaceInQuery = async (ctx: QueryCtx) => {
       q.eq("communityId", community._id).eq("slug", DEFAULT_CHANNEL_SLUG),
     )
     .unique();
-
-  if (!channel) {
-    return null;
-  }
+  if (!channel) return null;
 
   const thread = await ctx.db
     .query("threads")
@@ -108,14 +97,11 @@ const getDefaultSpaceInQuery = async (ctx: QueryCtx) => {
       q.eq("channelId", channel._id).eq("slug", DEFAULT_THREAD_SLUG),
     )
     .unique();
-
-  if (!thread) {
-    return null;
-  }
+  if (!thread) return null;
 
   return {
-    communityId: community._id,
     channelId: channel._id,
+    communityId: community._id,
     threadId: thread._id,
   };
 };
@@ -123,30 +109,31 @@ const getDefaultSpaceInQuery = async (ctx: QueryCtx) => {
 export const ensureDefaultSpace = mutation({
   args: {},
   returns: v.object({
-    communityId: v.id("communities"),
     channelId: v.id("channels"),
+    communityId: v.id("communities"),
     threadId: v.id("threads"),
   }),
   handler: async (ctx) => {
-    return await ensureDefaultSpaceInMutation(ctx);
+    await authComponent.getAuthUser(ctx);
+    return ensureDefaultSpaceInMutation(ctx);
   },
 });
 
-export const createMessage = internalMutation({
+export const sendMessage = mutation({
   args: {
-    authorId: v.string(),
     body: v.string(),
   },
   returns: v.object({
-    messageId: v.id("messages"),
-    communityId: v.id("communities"),
-    channelId: v.id("channels"),
-    threadId: v.id("threads"),
     authorId: v.string(),
     body: v.string(),
+    channelId: v.id("channels"),
+    communityId: v.id("communities"),
     createdAt: v.number(),
+    messageId: v.id("messages"),
+    threadId: v.id("threads"),
   }),
   handler: async (ctx, args) => {
+    const user = await authComponent.getAuthUser(ctx);
     const normalizedBody = args.body.trim();
 
     if (!normalizedBody) {
@@ -156,22 +143,22 @@ export const createMessage = internalMutation({
     const space = await ensureDefaultSpaceInMutation(ctx);
     const createdAt = Date.now();
     const messageId = await ctx.db.insert("messages", {
-      communityId: space.communityId,
-      channelId: space.channelId,
-      threadId: space.threadId,
-      authorId: args.authorId,
+      authorId: user._id,
       body: normalizedBody,
+      channelId: space.channelId,
+      communityId: space.communityId,
       createdAt,
+      threadId: space.threadId,
     });
 
     return {
-      messageId,
-      communityId: space.communityId,
-      channelId: space.channelId,
-      threadId: space.threadId,
-      authorId: args.authorId,
+      authorId: user._id,
       body: normalizedBody,
+      channelId: space.channelId,
+      communityId: space.communityId,
       createdAt,
+      messageId,
+      threadId: space.threadId,
     };
   },
 });
@@ -180,21 +167,19 @@ export const listMessages = query({
   args: {},
   returns: v.array(
     v.object({
-      messageId: v.id("messages"),
-      communityId: v.id("communities"),
-      channelId: v.id("channels"),
-      threadId: v.id("threads"),
       authorId: v.string(),
       body: v.string(),
+      channelId: v.id("channels"),
+      communityId: v.id("communities"),
       createdAt: v.number(),
+      messageId: v.id("messages"),
+      threadId: v.id("threads"),
     }),
   ),
   handler: async (ctx) => {
+    await authComponent.getAuthUser(ctx);
     const space = await getDefaultSpaceInQuery(ctx);
-
-    if (!space) {
-      return [];
-    }
+    if (!space) return [];
 
     const records = await ctx.db
       .query("messages")
@@ -203,15 +188,14 @@ export const listMessages = query({
       .take(50);
 
     records.reverse();
-
     return records.map((record) => ({
-      messageId: record._id,
-      communityId: record.communityId,
-      channelId: record.channelId,
-      threadId: record.threadId,
       authorId: record.authorId,
       body: record.body,
+      channelId: record.channelId,
+      communityId: record.communityId,
       createdAt: record.createdAt,
+      messageId: record._id,
+      threadId: record.threadId,
     }));
   },
 });
