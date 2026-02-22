@@ -38,6 +38,13 @@
 ## ADR-S1-006
 
 - Context: Better Auth should integrate directly with Convex for runtime auth, not as an isolated in-memory setup.
-- Decision: Add Convex-native Better Auth scaffolding in `convex/src/auth-config.ts` and `convex/src/better-auth.ts` using `@convex-dev/better-auth` (`getAuthConfigProvider`, `createClient`, `convex` plugin).
+- Decision: Add Convex-native Better Auth scaffolding in `convex/auth.config.ts`, `convex/auth.ts`, and `convex/http.ts` using `@convex-dev/better-auth` (`getAuthConfigProvider`, `createClient`, `convex` plugin).
 - Rationale: Matches official Better Auth + Convex integration guidance and keeps auth architecture aligned with Convex as the backend authority.
 - Consequences: Sprint 1 now includes a typed integration surface for Convex auth wiring, while core in-memory helpers remain test harness code until runtime endpoints are connected.
+
+## ADR-S1-007
+
+- Context: Sprint 1 needed a first real end-to-end slice (frontend + auth + persisted message), not only scaffolding/tests.
+- Decision: Implement a minimal production-shaped flow: web login/sign-up via Better Auth endpoints proxied by Vite, and real Convex-backed message persistence via `/api/messages` using default community/channel/thread records.
+- Rationale: Provides a runnable user path (authenticate, post, read) while preserving long-term model primitives.
+- Consequences: We now have a concrete integration baseline to iterate on (permissions, richer channel/thread UX, realtime subscriptions) without rewriting the auth/database foundation.

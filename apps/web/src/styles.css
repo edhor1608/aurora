@@ -1,13 +1,79 @@
 @import "tailwindcss";
 
+:root {
+  --bg-start: #f7f6f3;
+  --bg-end: #e4f1f8;
+  --ink: #14222d;
+  --muted: #486274;
+  --panel: #ffffffd9;
+  --accent: #0f766e;
+  --accent-ink: #083734;
+}
+
 body {
-  @apply m-0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
-    "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  @apply m-0 min-h-screen;
+  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+  color: var(--ink);
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+.page {
+  @apply mx-auto flex max-w-3xl flex-col gap-4 px-4 py-8;
+}
+
+.panel {
+  @apply rounded-xl border p-4 shadow-sm;
+  background: var(--panel);
+  border-color: #c6dbe8;
+}
+
+.hint {
+  color: var(--muted);
+}
+
+.stack {
+  @apply flex flex-col gap-3;
+}
+
+.field {
+  @apply flex flex-col gap-1;
+}
+
+.field input {
+  @apply rounded-md border px-3 py-2;
+  border-color: #b7cdda;
+}
+
+.row {
+  @apply flex flex-wrap gap-2;
+}
+
+button {
+  @apply rounded-md px-3 py-2 font-semibold;
+  background: var(--accent);
+  color: white;
+}
+
+button:disabled {
+  @apply cursor-not-allowed opacity-60;
+}
+
+.messages {
+  @apply mt-3 flex list-none flex-col gap-2 p-0;
+}
+
+.message {
+  @apply rounded-lg border px-3 py-2;
+  border-color: #b7cdda;
+  background: #f7fbfd;
+}
+
+.status {
+  color: var(--accent-ink);
+}
+
+.mono {
+  font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
 }

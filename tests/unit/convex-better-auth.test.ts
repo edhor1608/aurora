@@ -1,61 +1,25 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
+import authConfig from "../../convex/auth.config";
+import { authComponent, createAuth } from "../../convex/auth";
 import {
-  buildBetterAuthOptions,
-  createConvexBetterAuth,
-} from "../../convex/src/better-auth";
+  DEFAULT_CHANNEL_SLUG,
+  DEFAULT_COMMUNITY_SLUG,
+  DEFAULT_THREAD_SLUG,
+} from "../../convex/schema";
 
-describe("convex better-auth integration", () => {
-  it("builds better-auth options from convex context", () => {
-    const options = buildBetterAuthOptions(
-      {
-        siteUrl: "https://aurora.example.eu",
-        secret: "super-secret-value-at-least-32-characters",
-        component: { name: "betterAuthComponent" },
-        ctx: { user: "ctx" },
-        authConfig: { providers: [] },
-      },
-      {
-        createAdapter: (component, ctx) => ({ component, ctx }),
-        createConvexPlugin: () => ({ id: "convex-plugin" }) as never,
-        createCrossDomainPlugin: () => ({ id: "cross-domain-plugin" }) as never,
-      },
-    );
-
-    expect(options.baseURL).toBe("https://aurora.example.eu");
-    expect(options.basePath).toBe("/api/auth");
-    expect(options.secret).toBe("super-secret-value-at-least-32-characters");
-    expect(options.trustedOrigins).toEqual(["https://aurora.example.eu"]);
-    expect(options.database).toEqual({
-      component: { name: "betterAuthComponent" },
-      ctx: { user: "ctx" },
-    });
-    expect(options.plugins).toEqual([{ id: "convex-plugin" }]);
-    expect(options.emailAndPassword).toEqual({ enabled: true });
+describe("convex better-auth runtime wiring", () => {
+  it("uses customJwt provider from convex auth config", () => {
+    expect(authConfig.providers[0].type).toBe("customJwt");
   });
 
-  it("delegates auth creation to better-auth initializer", () => {
-    const betterAuthMock = vi.fn((options) => ({ options }));
+  it("exports default hierarchy slugs for community/channel/thread", () => {
+    expect(DEFAULT_COMMUNITY_SLUG).toBe("aurora");
+    expect(DEFAULT_CHANNEL_SLUG).toBe("general");
+    expect(DEFAULT_THREAD_SLUG).toBe("hello-world");
+  });
 
-    const result = createConvexBetterAuth(
-      {
-        siteUrl: "https://aurora.example.eu",
-        secret: "super-secret-value-at-least-32-characters",
-        component: "component-ref",
-        ctx: "ctx-ref",
-        authConfig: { providers: [] },
-      },
-      {
-        betterAuth: betterAuthMock,
-        createAdapter: (component, ctx) => ({ component, ctx }),
-        createConvexPlugin: () => ({ id: "convex-plugin" }) as never,
-        createCrossDomainPlugin: () => ({ id: "cross-domain-plugin" }) as never,
-      },
-    );
-
-    expect(betterAuthMock).toHaveBeenCalledTimes(1);
-    expect(result.options.database).toEqual({
-      component: "component-ref",
-      ctx: "ctx-ref",
-    });
+  it("exposes auth factory and component client hooks", () => {
+    expect(typeof createAuth).toBe("function");
+    expect(typeof authComponent.registerRoutes).toBe("function");
   });
 });

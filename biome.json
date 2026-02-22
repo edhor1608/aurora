@@ -13,6 +13,13 @@
     }
   },
   "files": {
-    "ignore": ["node_modules", "dist", ".expo", ".turbo"]
+    "ignore": [
+      "node_modules",
+      "dist",
+      ".expo",
+      ".turbo",
+      "**/_generated/**",
+      "**/routeTree.gen.ts"
+    ]
   }
 }
