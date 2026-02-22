@@ -16,6 +16,7 @@
     "test:smoke": "node -e \"console.log('web smoke ok')\""
   },
   "dependencies": {
+    "@t3-oss/env-core": "^0.13.10",
     "@convex-dev/better-auth": "^0.10.11",
     "@convex-dev/react-query": "^0.1.0",
     "@tanstack/react-devtools": "^0.9.6",
@@ -28,7 +29,8 @@
     "convex": "^1.32.0",
     "lucide-react": "^0.545.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.18",

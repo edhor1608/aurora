@@ -1,4 +1,5 @@
 import { authClient } from "@/lib/auth-client";
+import { env } from "@/lib/env";
 import type { AppRouterContext } from "@/lib/router-context";
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { ConvexQueryClient } from "@convex-dev/react-query";
@@ -7,15 +8,6 @@ import { createRouter } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
 import type { ReactNode } from "react";
 import { routeTree } from "./routeTree.gen";
-
-const convexUrl = import.meta.env.VITE_CONVEX_URL as string | undefined;
-
-const requireConvexUrl = () => {
-  if (!convexUrl) {
-    throw new Error("VITE_CONVEX_URL is not set");
-  }
-  return convexUrl;
-};
 
 const createRouterContext = (queryClient: QueryClient): AppRouterContext => {
   return {
@@ -39,7 +31,7 @@ const WrapWithAuthProvider = ({
 };
 
 export function getRouter() {
-  const convexQueryClient = new ConvexQueryClient(requireConvexUrl(), {
+  const convexQueryClient = new ConvexQueryClient(env.VITE_CONVEX_URL, {
     expectAuth: true,
   });
 

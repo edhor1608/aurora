@@ -5,11 +5,12 @@ import * as messages from "../../convex/messages";
 const read = (path: string) => readFileSync(path, "utf8");
 
 describe("convex auth and message flow follows official Better Auth integration", () => {
-  it("uses better-auth minimal server runtime and no fallback dev secret", () => {
+  it("uses better-auth minimal runtime with typed env module and no fallback dev secret", () => {
     const authSource = read("convex/auth.ts");
 
     expect(authSource).toContain('from "better-auth/minimal"');
-    expect(authSource).toContain("process.env.SITE_URL");
+    expect(authSource).toContain('from "./env"');
+    expect(authSource).toContain("env.SITE_URL");
     expect(authSource).not.toContain("DEV_AUTH_SECRET");
   });
 

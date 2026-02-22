@@ -5,25 +5,15 @@ import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 import authConfig from "./auth.config";
+import { env } from "./env";
 
 export const authComponent = createClient<DataModel>(components.betterAuth);
 
 export const createAuth = (ctx: GenericCtx<DataModel>) => {
-  const siteUrl = process.env.SITE_URL;
-  const secret = process.env.BETTER_AUTH_SECRET;
-
-  if (!siteUrl) {
-    throw new Error("SITE_URL must be set in Convex deployment environment");
-  }
-
-  if (!secret) {
-    throw new Error("BETTER_AUTH_SECRET must be set in Convex deployment environment");
-  }
-
   return betterAuth({
-    baseURL: siteUrl,
+    baseURL: env.SITE_URL,
     database: authComponent.adapter(ctx),
-    secret,
+    secret: env.BETTER_AUTH_SECRET,
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
