@@ -9,8 +9,7 @@ jobs:
   sync-readme-status:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -109,18 +108,30 @@ jobs:
             printf '\n%s\n' "$block" >> "$README"
           fi
 
-      - name: Create pull request for status sync
-        uses: peter-evans/create-pull-request@v7
+      - name: Detect status drift
+        id: drift
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- README.md .project-status; then
+            echo "has_drift=false" >> "$GITHUB_OUTPUT"
+            echo "README status already synchronized."
+            exit 0
+          fi
+
+          echo "has_drift=true" >> "$GITHUB_OUTPUT"
+          git diff -- README.md .project-status > readme-status-sync.patch
+          echo "::warning::README status drift detected. Apply readme-status-sync.patch in a pull request."
+          {
+            echo "### README status drift detected"
+            echo
+            echo "Artifact `readme-status-sync.patch` contains the proposed update."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload sync patch
+        if: steps.drift.outputs.has_drift == 'true'
+        uses: actions/upload-artifact@v4
         with:
-          add-paths: |
-            README.md
-            .project-status
-          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          base: main
-          branch: automation/readme-status-sync
-          commit-message: "chore: sync README status"
-          delete-branch: true
-          sign-commits: true
-          title: "chore: sync README status"
-          body: |
-            Automated status sync from `.project-status` into `README.md`.
+          name: readme-status-sync.patch
+          path: readme-status-sync.patch
