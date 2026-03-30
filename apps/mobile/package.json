@@ -8,7 +8,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsgo --noEmit -p tsconfig.json",
+    "typecheck:tsc": "tsc --noEmit -p tsconfig.json",
     "lint": "biome check App.tsx index.ts package.json app.json",
     "test": "bun run test:smoke",
     "test:smoke": "node -e \"console.log('mobile smoke ok')\""

@@ -4,6 +4,9 @@
     "typecheck": {
       "outputs": []
     },
+    "typecheck:tsc": {
+      "outputs": []
+    },
     "lint": {
       "outputs": []
     },

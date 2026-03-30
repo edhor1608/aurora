@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsgo --noEmit -p tsconfig.json",
+    "typecheck:tsc": "tsc --noEmit -p tsconfig.json",
     "lint": "biome check **/*.ts package.json",
     "test": "bun run test:smoke",
     "test:smoke": "node -e \"console.log('convex smoke ok')\""

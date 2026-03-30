@@ -10,7 +10,8 @@
     "build": "vite build",
     "start": "node .output/server/index.mjs",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsgo --noEmit -p tsconfig.json",
+    "typecheck:tsc": "tsc --noEmit -p tsconfig.json",
     "lint": "biome check src package.json vite.config.ts",
     "test": "vitest run --passWithNoTests",
     "test:smoke": "node -e \"console.log('web smoke ok')\""

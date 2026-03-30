@@ -62,3 +62,10 @@
 - Decision: Increase subprocess and test-level timeouts in the baseline command e2e test to account for realistic workspace execution time.
 - Rationale: Preserves the purpose of the baseline gate while removing flaky timeout failures.
 - Consequences: Baseline command e2e remains strict on exit codes but is stable under normal local/CI runtime variance.
+
+## ADR-2026-03-30-typescript-native-workspace-rollout
+
+- Context: `aurora` already had a clean workspace-wide `tsc` baseline, but the native compiler preview rejected the shared `baseUrl` setup in `tsconfig.base.json` and the web app tsconfig.
+- Decision: Promote `tsgo` to the main `typecheck` path across the workspace, preserve `typecheck:tsc` at the root and in every package, and remove the two `baseUrl` entries while keeping the existing `paths` aliases.
+- Rationale: This is the smallest workspace-wide rollout that exercises the native compiler across Expo, Vite, Convex, and shared packages without changing the repo structure or public APIs.
+- Consequences: Root `typecheck` now validates the workspace through `tsgo`, while `typecheck:tsc` remains available as a direct fallback. Alias resolution no longer depends on `baseUrl`, which keeps the repo compatible with the current native compiler preview.

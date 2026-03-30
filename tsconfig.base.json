@@ -9,12 +9,11 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "noEmit": true,
-    "baseUrl": ".",
     "paths": {
-      "@aurora/core": ["packages/core/src/index.ts"],
-      "@aurora/sdk": ["packages/sdk/src/index.ts"],
-      "@aurora/ui": ["packages/ui/src/index.ts"],
-      "@aurora/config": ["packages/config/src/index.ts"]
+      "@aurora/core": ["./packages/core/src/index.ts"],
+      "@aurora/sdk": ["./packages/sdk/src/index.ts"],
+      "@aurora/ui": ["./packages/ui/src/index.ts"],
+      "@aurora/config": ["./packages/config/src/index.ts"]
     }
   }
 }
