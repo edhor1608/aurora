@@ -1,26 +1,36 @@
-import { expect, test, type Page } from "@playwright/test";
+import { type Page, expect, test } from "@playwright/test";
 
 const ensureSignedIn = async (page: Page) => {
   const signInButton = page.getByRole("button", { name: "Sign in" });
   const signUpButton = page.getByRole("button", { name: "Sign up" });
   const sendButton = page.getByRole("button", { name: "Send" });
+  let lastAuthError: unknown;
+  let triedSignUp = false;
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     await signInButton.click();
     try {
       await expect(sendButton).toBeEnabled({ timeout: 5_000 });
       return;
-    } catch {}
+    } catch (error) {
+      lastAuthError = error;
+    }
 
-    await signUpButton.click();
-    await signInButton.click();
-    try {
-      await expect(sendButton).toBeEnabled({ timeout: 5_000 });
-      return;
-    } catch {}
+    if (!triedSignUp) {
+      triedSignUp = true;
+      await signUpButton.click();
+      await signInButton.click();
+      try {
+        await expect(sendButton).toBeEnabled({ timeout: 5_000 });
+        return;
+      } catch (error) {
+        lastAuthError = error;
+      }
+    }
   }
 
-  await expect(sendButton).toBeEnabled({ timeout: 20_000 });
+  const message = lastAuthError instanceof Error ? lastAuthError.message : String(lastAuthError);
+  throw new Error(`Unable to sign in during browser test: ${message}`);
 };
 
 test("requires auth before sending a message", async ({ page }) => {

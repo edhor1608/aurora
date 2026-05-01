@@ -37,8 +37,9 @@ See `docs/agent-runbook.md` for the full agent workflow and known gaps.
 
 - `bun run typecheck`
 - `bun run lint`
+- `bun run quality`
 - `bun run test`
-- `bun run test:workspaces`
+- `bun run verify`
 - `bun run test:e2e:browser` when `.env.local` points at a usable Convex deployment
 
 ## Hello World Vertical Slice

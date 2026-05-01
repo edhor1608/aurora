@@ -31,7 +31,7 @@
 2. Copy `.env.example` to `.env.local` and fill `SITE_URL`, `BETTER_AUTH_SECRET`, `VITE_CONVEX_URL`, and `VITE_CONVEX_SITE_URL`.
 3. Push Convex functions and regenerate types with `bunx convex dev --once`.
 4. Start the web app with `bun run --filter @aurora/web dev`.
-5. Run validation with `bun run typecheck`, `bun run lint`, and `bun run test`.
+5. Run normal validation with `bun run verify`.
 6. Run browser e2e with `bun run test:e2e:browser` only when `.env.local` points at a usable Convex deployment.
 
 ## Docs Expectations
