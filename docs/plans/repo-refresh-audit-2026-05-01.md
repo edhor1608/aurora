@@ -281,3 +281,11 @@ Partially addressed in Graphite branch `repo-refresh-convex-message-tests`.
 - Added direct Convex message function tests with `convex-test`.
 - Covered unauthenticated access, empty-message rejection, body trimming, ordering, and persistence.
 - Remaining backend coverage gap: broader channel/thread and permission behavior should be directly tested before those features expand.
+
+### Product scope honesty
+
+Addressed in Graphite branch `repo-refresh-capability-matrix`.
+
+- Added `docs/capabilities.md` with `implemented`, `tested`, `stubbed`, and `planned` statuses.
+- Linked the matrix from README and the agent runbook.
+- Explicitly marked public API parity, self-host Docker Compose, voice, moderation, and imports as planned rather than supported.

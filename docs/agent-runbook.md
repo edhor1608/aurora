@@ -6,6 +6,8 @@ Aurora currently has one real vertical slice: a TanStack Start web page signs us
 
 Mobile is a placeholder shell, not a shipped product surface. Self-hosting, public API parity, voice, moderation, imports, and broad channel/thread management are documented product directions, not implemented capabilities.
 
+Use `docs/capabilities.md` as the source of truth before claiming a capability is implemented or tested. When adding or changing agent behavior, implementation, or tests, update the matrix entry with the new status and evidence links in the same branch.
+
 ## Fresh Clone Setup
 
 1. Install Bun 1.3.6 and Node 22.
