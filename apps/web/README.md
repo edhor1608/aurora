@@ -1,31 +1,32 @@
 # Aurora Web App
 
-Sprint 1 foundation web starter for Aurora, based on Vite + React + TanStack Router dependencies.
+TanStack Start web app for Aurora's current auth and message vertical slice.
 
 ## Getting Started
 
 ```bash
 bun install
-bun --bun run dev
+bunx convex dev --once
+bun run --filter @aurora/web dev
 ```
+
+The app expects `.env.local` at the repo root. Copy `.env.example` and fill `VITE_CONVEX_URL`, `VITE_CONVEX_SITE_URL`, `SITE_URL`, and `BETTER_AUTH_SECRET`.
 
 ## Build
 
 ```bash
-bun --bun run build
+bun run --filter @aurora/web build
 ```
 
 ## Test
 
 ```bash
-bun --bun run test
+bun run test
+bun run test:e2e:browser
 ```
 
-## Styling
+Run the browser e2e command only when `.env.local` points at a usable Convex deployment.
 
-This app uses Tailwind CSS via Vite plugin.
+## Scope
 
-If you want to remove Tailwind support:
-1. Remove the Tailwind import from `src/styles.css`.
-2. Remove `tailwindcss()` from `vite.config.ts`.
-3. Uninstall packages with `bun remove @tailwindcss/vite tailwindcss`.
+Implemented behavior is intentionally small: sign up, sign in, sign out, send a message, and list persisted messages in the default community/thread.
