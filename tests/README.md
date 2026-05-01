@@ -4,6 +4,7 @@
 
 - `tests/unit/*`: isolated logic and contract tests
 - `tests/integration/*`: cross-module behavior (Convex + auth + repo architecture)
+- `tests/integration/convex-messages.integration.test.ts`: direct Convex message function behavior through `convex-test`
 - `tests/e2e/playwright/*`: browser E2E via Playwright
 
 ## Commands

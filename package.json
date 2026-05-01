@@ -18,9 +18,11 @@
     "node": ">=22 <23"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.1",
     "@biomejs/biome": "^1.9.4",
+    "@edge-runtime/vm": "^5.0.0",
+    "@playwright/test": "^1.55.1",
     "@types/node": "^22.19.11",
+    "convex-test": "^0.0.51",
     "turbo": "^2.4.4",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"

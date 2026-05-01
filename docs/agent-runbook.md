@@ -36,6 +36,6 @@ For code changes, prefer the smallest fix that addresses the root cause. Do not 
 
 ## Known Gaps From The 2026-05-01 Audit
 
-- Convex function behavior needs direct tests.
+- Convex message behavior has direct tests for auth-required access, empty-message rejection, trimming, ordering, and persistence. Broader channel/thread and permission behavior still needs direct Convex coverage.
 - Browser e2e coverage is still limited to the basic auth and message path.
 - CI skips browser e2e unless Convex env is configured.
