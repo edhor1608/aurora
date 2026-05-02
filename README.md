@@ -32,6 +32,7 @@ The broader direction is Discord-like communities with EU-first operation, publi
 5. Open `http://localhost:3000`
 
 See `docs/agent-runbook.md` for the full agent workflow and known gaps.
+See `docs/capabilities.md` as the source of truth for implemented, tested, stubbed, and planned features; the Implemented Now section is only a high-level summary.
 
 ## Validation
 
