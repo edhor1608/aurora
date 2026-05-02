@@ -37,8 +37,11 @@ jobs:
       - name: Lint
         run: bun run lint
 
-      - name: Workspace Tests
-        run: bun run test:workspaces
+      - name: Quality
+        run: bun run quality
 
       - name: Repository Tests
         run: bun run test
+
+      - name: Browser E2E
+        run: bun run test:e2e:browser:local

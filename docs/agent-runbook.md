@@ -23,8 +23,9 @@ The browser e2e test depends on a usable Convex deployment and `.env.local`. Uni
 
 - `bun run typecheck` checks TypeScript across workspaces.
 - `bun run lint` runs Biome across workspaces.
+- `bun run quality` runs repo-specific generated-code-smell guardrails.
 - `bun run test` runs repository Vitest tests.
-- `bun run test:workspaces` runs package-level tests.
+- `bun run verify` runs the normal typecheck, lint, quality, Vitest, and local browser e2e gate.
 - `bun run test:e2e:browser` runs Playwright against the web app and should be used when Convex env is configured.
 
 ## Development Loop
@@ -35,8 +36,6 @@ For code changes, prefer the smallest fix that addresses the root cause. Do not 
 
 ## Known Gaps From The 2026-05-01 Audit
 
-- There is not yet a single `bun run verify` command.
-- Repo-specific quality checks for generated-code smells are not implemented yet.
 - Convex function behavior needs direct tests.
 - Browser e2e coverage is still limited to the basic auth and message path.
-- CI does not yet run browser e2e because it needs an explicit backend mode.
+- CI skips browser e2e unless Convex env is configured.

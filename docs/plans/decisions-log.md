@@ -62,3 +62,10 @@
 - Decision: Increase subprocess and test-level timeouts in the baseline command e2e test to account for realistic workspace execution time.
 - Rationale: Preserves the purpose of the baseline gate while removing flaky timeout failures.
 - Consequences: Baseline command e2e remains strict on exit codes but is stable under normal local/CI runtime variance.
+
+## ADR-S1-010
+
+- Context: The repo refresh audit found that command verification was hidden inside Vitest and placeholder smoke/pass-with-no-tests scripts could still produce green results.
+- Decision: Move baseline command verification into `bun run verify`, add `bun run quality`, and remove placeholder package test scripts until packages have real local tests.
+- Rationale: Verification should be an explicit developer and CI command, while tests should assert behavior instead of shelling out to the whole repo.
+- Consequences: Agents get one normal validation command, and package-level test scripts must now be backed by real tests before being reintroduced.

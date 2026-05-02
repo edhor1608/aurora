@@ -4,9 +4,7 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "lint": "biome check **/*.ts package.json",
-    "test": "bun run test:smoke",
-    "test:smoke": "node -e \"console.log('convex smoke ok')\""
+    "lint": "biome check **/*.ts package.json"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.10",
