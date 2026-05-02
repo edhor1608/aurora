@@ -250,3 +250,34 @@ The next product feature should be permission-aware message posting/read policy 
 - `bun run test:e2e:browser`: passed.
 - `bun outdated`: showed Convex, Turbo, Playwright, Biome, Vitest, TypeScript, and Node types updates available.
 - `gt --version`: Graphite CLI available, version 1.8.5.
+
+## Execution Progress
+
+### Milestone 1: Make the repo honest
+
+Addressed in Graphite branch `repo-refresh-docs-runtime-honesty`.
+
+- Added root `AGENTS.md`.
+- Added `.env.example`.
+- Replaced stale starter READMEs for root, web, and Convex.
+- Added `docs/agent-runbook.md`.
+- Updated mobile starter copy to a minimal Aurora placeholder shell.
+- Ignored local `.codex/` drafts.
+
+### Milestone 2: Make verification real
+
+Addressed in Graphite branch `repo-refresh-verification-guardrails`.
+
+- Added `bun run verify`.
+- Added `bun run quality`.
+- Removed nested baseline command checks from Vitest.
+- Removed placeholder smoke tests and `--passWithNoTests` package scripts.
+- Added CI quality and local browser-e2e steps.
+
+### Milestone 3: Test the real backend path
+
+Partially addressed in Graphite branch `repo-refresh-convex-message-tests`.
+
+- Added direct Convex message function tests with `convex-test`.
+- Covered unauthenticated access, empty-message rejection, body trimming, ordering, and persistence.
+- Remaining backend coverage gap: broader channel/thread and permission behavior should be directly tested before those features expand.

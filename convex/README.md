@@ -22,4 +22,4 @@ All message functions require an authenticated Better Auth user. `sendMessage` t
 
 ## Tests
 
-Current repository tests cover the core text flow and browser path, but direct Convex function tests are still a known gap. Add those before expanding message, channel, or permission behavior.
+Current repository tests cover the core text flow, direct Convex message behavior, and browser path. Add broader direct Convex tests before expanding channel, thread, or permission behavior.
