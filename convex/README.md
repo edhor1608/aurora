@@ -1,90 +1,25 @@
-# Welcome to your Convex functions directory!
+# Aurora Convex Backend
 
-Write your Convex functions here.
-See https://docs.convex.dev/functions for more.
+This directory contains Aurora's current backend slice:
 
-A query function that takes two arguments looks like:
+- Better Auth integration in `auth.ts` and `http.ts`.
+- Required backend env parsing in `env.ts`.
+- Default community/channel/thread/message schema in `schema.ts`.
+- Message query and mutation functions in `messages.ts`.
 
-```ts
-// convex/myFunctions.ts
-import { query } from "./_generated/server";
-import { v } from "convex/values";
+## Local Setup
 
-export const myQueryFunction = query({
-  // Validators for arguments.
-  args: {
-    first: v.number(),
-    second: v.string(),
-  },
+1. Copy `.env.example` to `.env.local` at the repo root.
+2. Fill `SITE_URL`, `BETTER_AUTH_SECRET`, `VITE_CONVEX_URL`, and `VITE_CONVEX_SITE_URL`.
+3. Push functions and regenerate types with `bunx convex dev --once`.
+4. Start the web app with `bun run --filter @aurora/web dev`.
 
-  // Function implementation.
-  handler: async (ctx, args) => {
-    // Read the database as many times as you need here.
-    // See https://docs.convex.dev/database/reading-data.
-    const documents = await ctx.db.query("tablename").collect();
+`convex/_generated` is committed because the web app imports generated API types. Regenerate it after adding, removing, or renaming Convex modules.
 
-    // Arguments passed from the client are properties of the args object.
-    console.log(args.first, args.second);
+## Auth And Messages
 
-    // Write arbitrary JavaScript here: filter, aggregate, build derived data,
-    // remove non-public properties, or create new objects.
-    return documents;
-  },
-});
-```
+All message functions require an authenticated Better Auth user. `sendMessage` trims message bodies and rejects empty messages. `listMessages` returns the latest messages for the default thread in ascending display order.
 
-Using this query function in a React component looks like:
+## Tests
 
-```ts
-const data = useQuery(api.myFunctions.myQueryFunction, {
-  first: 10,
-  second: "hello",
-});
-```
-
-A mutation function looks like:
-
-```ts
-// convex/myFunctions.ts
-import { mutation } from "./_generated/server";
-import { v } from "convex/values";
-
-export const myMutationFunction = mutation({
-  // Validators for arguments.
-  args: {
-    first: v.string(),
-    second: v.string(),
-  },
-
-  // Function implementation.
-  handler: async (ctx, args) => {
-    // Insert or modify documents in the database here.
-    // Mutations can also read from the database like queries.
-    // See https://docs.convex.dev/database/writing-data.
-    const message = { body: args.first, author: args.second };
-    const id = await ctx.db.insert("messages", message);
-
-    // Optionally, return a value from your mutation.
-    return await ctx.db.get("messages", id);
-  },
-});
-```
-
-Using this mutation function in a React component looks like:
-
-```ts
-const mutation = useMutation(api.myFunctions.myMutationFunction);
-function handleButtonPress() {
-  // fire and forget, the most common way to use mutations
-  mutation({ first: "Hello!", second: "me" });
-  // OR
-  // use the result once the mutation has completed
-  mutation({ first: "Hello!", second: "me" }).then((result) =>
-    console.log(result),
-  );
-}
-```
-
-Use the Convex CLI to push your functions to a deployment. See everything
-the Convex CLI can do by running `npx convex -h` in your project root
-directory. To learn more, launch the docs with `npx convex docs`.
+Current repository tests cover the core text flow and browser path, but direct Convex function tests are still a known gap. Add those before expanding message, channel, or permission behavior.
