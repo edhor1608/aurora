@@ -50,4 +50,29 @@ test("can sign up and send a persisted hello-world message", async ({ page }) =>
   await page.getByRole("button", { name: "Send" }).click();
 
   await expect(page.getByText(message)).toBeVisible();
+
+  await page.reload();
+  await ensureSignedIn(page);
+  await expect(page.getByText(message)).toBeVisible();
+});
+
+test("rejects empty messages before sending", async ({ page }) => {
+  const sendMessageRequests: string[] = [];
+  page.on("request", (request) => {
+    const body = request.postData() ?? "";
+    if (request.method() === "POST" && body.includes("sendMessage")) {
+      sendMessageRequests.push(request.url());
+    }
+  });
+
+  await page.goto("/");
+  await ensureSignedIn(page);
+
+  await page.getByLabel("Message").fill("   ");
+  await page.getByRole("button", { name: "Send" }).click();
+
+  await expect(page.getByText("Message body cannot be empty")).toBeVisible();
+  await expect(page.getByText("Sending message...")).toBeHidden();
+  await page.waitForTimeout(300);
+  expect(sendMessageRequests).toEqual([]);
 });

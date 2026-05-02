@@ -289,3 +289,10 @@ Addressed in Graphite branch `repo-refresh-capability-matrix`.
 - Added `docs/capabilities.md` with `implemented`, `tested`, `stubbed`, and `planned` statuses.
 - Linked the matrix from README and the agent runbook.
 - Explicitly marked public API parity, self-host Docker Compose, voice, moderation, and imports as planned rather than supported.
+
+### Browser coverage
+
+Addressed in Graphite branch `repo-refresh-browser-message-coverage`.
+
+- Extended Playwright coverage to verify message persistence after reload.
+- Added browser coverage for empty-message rejection before mutation submission.
